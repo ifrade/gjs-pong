@@ -30,7 +30,7 @@ Ball.prototype.shouldStop = function () {
 Ball.prototype.move = function (playerOneSurface,
                                 playerTwoSurface) {
     let previousPos = this.ball.get_position();
-    
+
     let newX = previousPos[0] + this.xdirection;
     let newY = previousPos[1] + this.ydirection;
     if (newY < 0 || (newY > (this.stage.get_height() - this.mySize))) {
@@ -52,27 +52,35 @@ Ball.prototype.move = function (playerOneSurface,
                 newY <= surface.ybottom);
     }
 
+    function getReflectionFactor(surface) {
+        var surfaceLength = surface.ybottom - surface.ytop; // surface length
+        var stepLength = Math.floor(surfaceLength / 8);
+        //assert(stepLength > 0, "The stick cannot be smaller than 8!");
+        var collisionPoint = (newY - surface.ytop) < 0
+            ? 0
+            : newY - surface.ytop;
+
+        var collisionFactor = Math.floor(collisionPoint / stepLength); // 0 => 8
+        return (collisionFactor - 4);
+    }
+
+    function playerHitsBall(surface) {
+        if (checkCollision(surface)) {
+            that.xdirection = that.xdirection * -1;
+            //print("Applying factor", );
+            that.ydirection += getReflectionFactor(surface);
+            return;
+        }
+        print("Player missed. Player Y: (", surface.ytop, surface.ybottom, ")",
+              "ball Y: ", newY);
+
+        that.isOver = true;
+    }
+
+
     if (newX <= this.playerOneX) {
-        if (checkCollision(playerOneSurface)) {
-            this.xdirection = this.xdirection * -1;
-            this.ydirection += Math.random() < 0.5 ? -1 : 1;
-        } else {
-            print("is over",
-                  "player X:", this.playerOneX, "ball X:", newX,
-                  " y: (", playerOneSurface.ytop, playerOneSurface.ybottom, ")",
-                  "ball Y: ", newY);
-            this.isOver = true;
-        }
+        playerHitsBall(playerOneSurface);
     } else if (newX + this.mySize >= this.playerTwoX) {
-        if (checkCollision(playerTwoSurface)) {
-            this.xdirection = this.xdirection * -1;
-            this.ydirection += Math.random() < 0.5 ? -1 : 1;
-        } else {
-            print("is over",
-                  "player X:", this.playerTwoX, "ball X:", newX,
-                  " y: (", playerTwoSurface.ytop, playerTwoSurface.ybottom, ")",
-                  "ball Y: ", newY);
-            this.isOver = true;
-        }
+        playerHitsBall(playerTwoSurface);
     }
 }
