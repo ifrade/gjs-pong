@@ -21,6 +21,10 @@ const Counter = new Lang.Class({
         this._set_value(0);
     },
 
+    get_value: function () {
+        return this.value;
+    },
+
     _set_value: function (newValue) {
         this.value = newValue;
         this.set_text(this.value.toString());
@@ -140,6 +144,10 @@ const LedCounter = new Lang.Class({
     
     increment: function () {
         this._set_value(this.value + 1);
+    },
+
+    get_value: function () {
+        return this.value;
     },
 
     reset: function () {
