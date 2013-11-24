@@ -19,13 +19,22 @@ Ball.prototype.reset = function () {
     var speed = Math.floor((Math.random() * 4)) + 3;
     this.xdirection = speed * ((Math.random() < 0.5) ? -1 : 1); // -1 left, 1 right
     this.ydirection = (Math.random() < 0.5) ? -1 : 1; // -1 down, 0 flat, 1 up
-}
+};
 
-Ball.prototype.shouldStop = function () {
+Ball.prototype.scored = function () {
     let pos = this.ball.get_position();
-    // Stop when the ball disappears over the side
-    return this.isOver && (pos[0] + this.mySize < 0 || pos[0] > this.stage.get_width());
-}
+    if (!this.isOver) {
+        return 0;
+    }
+
+    if (pos[0] + this.mySize < 0) {
+        return 1; // Right player scored
+    } else if (pos[0] > this.stage.get_width()) {
+        return -1; // Left player scored
+    }
+
+    return 0;
+};
 
 Ball.prototype.move = function (playerOneSurface,
                                 playerTwoSurface) {

@@ -2,6 +2,7 @@ imports.searchPath.unshift('.');
 const Clutter = imports.gi.Clutter;
 const Player = imports.player.Player;
 const Ball = imports.ball.Ball;
+const LedCounter = imports.counter.LedCounter;
 
 let PLAYER_ONE_UP = 25;   // W
 let PLAYER_ONE_DOWN = 39; // S
@@ -28,6 +29,16 @@ let playerOne = new Player(stage, margin, 200);
 // -10 because of the size of the stick... parameter?
 let playerTwo = new Player(stage, stage.get_width()-margin-10, 200);
 let ball = new Ball(stage, margin + 10, stage.get_width()-margin-10);
+
+let playerOneCounter = new LedCounter();
+let playerTwoCounter = new LedCounter();
+
+playerOneCounter.set_position((stage.get_width()/2)-playerOneCounter.get_width()-30,
+                              20);
+playerTwoCounter.set_position((stage.get_width()/2)+30,
+                              20);
+stage.add_actor(playerOneCounter);
+stage.add_actor(playerTwoCounter);
 
 // Eat repetisions of a key
 stage.connect("captured-event", function (obj, event, user_data) {
@@ -99,8 +110,12 @@ function restart_game() {
     if (gameloop.is_playing()) {
         gameloop.stop();
     }
-    ball.reset();
-    gameloop.start();
+
+    if (playerOneCounter.get_value() < 9 &&
+        playerTwoCounter.get_value() < 9) {
+        ball.reset();
+        gameloop.start();
+    }
 }
 
 let gameloop = new Clutter.Timeline({"duration": 10000, "loop": true});
@@ -108,11 +123,20 @@ gameloop.connect('new-frame', function () {
     playerOne.move();
     playerTwo.move();
     ball.move(playerOne.get_surface(), playerTwo.get_surface());
-    if (ball.shouldStop()) {
-        gameloop.stop();
-        //Clutter.main_quit();
+
+    let result = ball.scored();
+    if (result === 0) {
+        return;
     }
+
+    if (result === -1) {
+        playerOneCounter.increment();
+    } else {
+        playerTwoCounter.increment();
+    }
+    gameloop.stop();
 });
+
 gameloop.connect('completed', function (gl, user_data) {
     ball.speed += 1;
 });
