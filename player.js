@@ -2,8 +2,9 @@ const Clutter = imports.gi.Clutter;
 
 function Player(stage, initialX, initialY) {
     this.stick = new Clutter.Rectangle();
-    this.myLength = 100;
-    this.stick.set_size(10, this.myLength);
+    this.xsize = 10;
+    this.ysize = 100;
+    this.stick.set_size(this.xsize, this.ysize);
     this.stick.set_position(initialX, initialY);
     this.stick.set_color(new Clutter.Color({
         red: 150,
@@ -38,7 +39,7 @@ Player.prototype.move = function () {
 Player.prototype.get_surface = function () {
     let position = this.stick.get_position();
     return {ytop: position[1], 
-            ybottom: position[1] + this.myLength };
+            ybottom: position[1] + this.ysize };
 }
 
 Player.prototype.moveUp = function() {
@@ -54,7 +55,7 @@ Player.prototype.moveUp = function() {
 Player.prototype.moveDown = function() {
     let previousPos = this.stick.get_position();
     let newY = previousPos[1] + 10;
-    if (newY > this.stageDimensions[1] - this.myLength - 10) {
+    if (newY > this.stageDimensions[1] - this.ysize - 10) {
         return;
     }
     this.stick.set_position(previousPos[0], newY);
