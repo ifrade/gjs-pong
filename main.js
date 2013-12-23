@@ -1,5 +1,9 @@
+/*jshint moz: true, camelcase: false */
+/*global imports, print*/
+
 imports.searchPath.unshift('.');
 const Clutter = imports.gi.Clutter;
+const FilteredStage = imports.filteredStage.FilteredStage;
 const Player = imports.player.Player;
 const Ball = imports.ball.Ball;
 const LedCounter = imports.counter.LedCounter;
@@ -12,7 +16,7 @@ let RESTART = 27; // R
 
 Clutter.init(null);
 
-let stage = new Clutter.Stage();
+let stage = new FilteredStage();
 stage.title = "Pong!";
 stage.connect("destroy", Clutter.main_quit);
 stage.set_background_color(new Clutter.Color({
@@ -39,36 +43,6 @@ playerTwoCounter.set_position((stage.get_width()/2)+30,
                               20);
 stage.add_actor(playerOneCounter);
 stage.add_actor(playerTwoCounter);
-
-// Eat repetisions of a key
-stage.connect("captured-event", function (obj, event, user_data) {
-    //print("captured-event", event.get_key_code(), event.type());
-    let PRESS = 1; // FIXME find the proper constans in clutter
-
-    if (event.type() !== PRESS) {
-        return false;
-    }
-    
-    switch (event.get_key_code()) {
-        case PLAYER_ONE_UP:
-        case PLAYER_ONE_DOWN:
-        if (playerOne.get_direction() !== 0) {
-            return true;
-        }
-        return false;
-
-        case PLAYER_TWO_UP:
-        case PLAYER_TWO_DOWN:
-        if (playerTwo.get_direction() !== 0) {
-            return true;
-        }
-
-        case RESTART: return false;
-        return false;
-    }
-
-    return false;
-});
 
 stage.connect("key-press-event", function (obj, event, user_data) {
     //print("key-press-event", event.get_key_code());
