@@ -30,13 +30,14 @@ stage.set_background_color(new Clutter.Color({
 //print (stage.get_width(), stage.get_height()); // 640, 480
 
 // Player margins
-let margin = 50; // Space from the left/right side
+let margin = 40; // Space from the left/right side
 let upperLimit = 10; // Space from the top (player won't go "higher" than this)
 let lowerLimit = stage.get_height() - 10; // from the bottom (player wont go "lower" than this)
 
 let stageCenterX = stage.get_width() / 2;
-let stageCenterY = stage.get_heigth() / 2;
+let stageCenterY = stage.get_height() / 2;
 
+// Add players, ball and counters to the stage
 let playerOne = new Player(margin, 200, upperLimit, lowerLimit);
 let playerTwo = new Player(stage.get_width() - margin - 10, 200, upperLimit, lowerLimit);
 stage.add_actor(playerOne);
@@ -52,41 +53,8 @@ playerTwoCounter.set_position(stageCenterX + 30, 20);
 stage.add_actor(playerOneCounter);
 stage.add_actor(playerTwoCounter);
 
-stage.connect("key-press-event", function (obj, event, user_data) {
-    //print("key-press-event", event.get_key_code());
-    switch (event.get_key_code()) {
-        case PLAYER_ONE_UP: playerOne.set_direction(1);
-        break;
-        case PLAYER_ONE_DOWN: playerOne.set_direction(-1);
-        break;
-        case PLAYER_TWO_UP: playerTwo.set_direction(1);
-        break;
-        case PLAYER_TWO_DOWN: playerTwo.set_direction(-1);
-        break;
-        default:
-        return true;
-    }
-    return true;
-});
-
-stage.connect("key-release-event", function (obj, event, user_data) {
-    //print("key-release-event", event.get_key_code());
-
-    switch (event.get_key_code()) {
-        case PLAYER_ONE_UP:
-        case PLAYER_ONE_DOWN:
-        playerOne.set_direction(0);
-        break;
-        case PLAYER_TWO_UP:
-        case PLAYER_TWO_DOWN:
-        playerTwo.set_direction(0);
-        break;
-        case RESTART: restart_game();
-        default:
-        return true;
-    }
-    return true;
-});
+// Set up game loop
+let gameloop = new Clutter.Timeline({"duration": 10000, "loop": true});
 
 function restart_game() {
     if (gameloop.is_playing()) {
@@ -100,7 +68,6 @@ function restart_game() {
     }
 }
 
-let gameloop = new Clutter.Timeline({"duration": 10000, "loop": true});
 gameloop.connect('new-frame', function () {
     playerOne.move();
     playerTwo.move();
@@ -123,6 +90,45 @@ gameloop.connect('completed', function (gl, user_data) {
     ball.speed += 1;
 });
 
+// Setup keyboard interaction
+stage.connect("key-press-event", function (obj, event, user_data) {
+    //print("key-press-event", event.get_key_code());
+    switch (event.get_key_code()) {
+        case PLAYER_ONE_UP:
+            playerOne.set_direction(1);
+            break;
+        case PLAYER_ONE_DOWN:
+            playerOne.set_direction(-1);
+            break;
+        case PLAYER_TWO_UP:
+            playerTwo.set_direction(1);
+            break;
+        case PLAYER_TWO_DOWN:
+            playerTwo.set_direction(-1);
+            break;
+    }
+    return true;
+});
+
+stage.connect("key-release-event", function (obj, event, user_data) {
+    //print("key-release-event", event.get_key_code());
+    switch (event.get_key_code()) {
+        case PLAYER_ONE_UP:
+        case PLAYER_ONE_DOWN:
+            playerOne.set_direction(0);
+            break;
+        case PLAYER_TWO_UP:
+        case PLAYER_TWO_DOWN:
+            playerTwo.set_direction(0);
+            break;
+        case RESTART:
+            restart_game();
+            break;
+    }
+    return true;
+});
+
+// and... here we go!
 stage.show();
 gameloop.start();
 
