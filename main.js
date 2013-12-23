@@ -4,7 +4,8 @@
 imports.searchPath.unshift('.');
 const Clutter = imports.gi.Clutter;
 const FilteredStage = imports.filteredStage.FilteredStage;
-const Player = imports.player.Player;
+const Player = imports.player.PongPlayer;
+const PlayerWidth = imports.player.PONG_STICK_WIDTH;
 const Ball = imports.ball.Ball;
 const LedCounter = imports.counter.LedCounter;
 
@@ -27,20 +28,27 @@ stage.set_background_color(new Clutter.Color({
 }));
 
 //print (stage.get_width(), stage.get_height()); // 640, 480
-let margin = 50;
 
-let playerOne = new Player(stage, margin, 200);
-// -10 because of the size of the stick... parameter?
-let playerTwo = new Player(stage, stage.get_width()-margin-10, 200);
-let ball = new Ball(stage, margin + 10, stage.get_width()-margin-10);
+// Player margins
+let margin = 50; // Space from the left/right side
+let upperLimit = 10; // Space from the top (player won't go "higher" than this)
+let lowerLimit = stage.get_height() - 10; // from the bottom (player wont go "lower" than this)
+
+let stageCenterX = stage.get_width() / 2;
+let stageCenterY = stage.get_heigth() / 2;
+
+let playerOne = new Player(margin, 200, upperLimit, lowerLimit);
+let playerTwo = new Player(stage.get_width() - margin - 10, 200, upperLimit, lowerLimit);
+stage.add_actor(playerOne);
+stage.add_actor(playerTwo);
+
+let ball = new Ball(stage, margin + 10, stage.get_width() - margin - 10);
 
 let playerOneCounter = new LedCounter();
 let playerTwoCounter = new LedCounter();
 
-playerOneCounter.set_position((stage.get_width()/2)-playerOneCounter.get_width()-30,
-                              20);
-playerTwoCounter.set_position((stage.get_width()/2)+30,
-                              20);
+playerOneCounter.set_position(stageCenterX - playerOneCounter.get_width() - 30, 20);
+playerTwoCounter.set_position(stageCenterX + 30, 20);
 stage.add_actor(playerOneCounter);
 stage.add_actor(playerTwoCounter);
 
