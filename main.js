@@ -44,7 +44,7 @@ let playerTwo = new Player(stage.get_width() - margin - 10, 200, upperLimit, low
 stage.add_actor(playerOne);
 stage.add_actor(playerTwo);
 
-let ball = new Ball(0, 480); // FIXME
+let ball = new Ball();
 stage.add_actor(ball);
 
 let playerOneCounter = new LedCounter();

@@ -9,13 +9,10 @@ const PongBall = new Lang.Class({
     Name: "PongBall",
     Extends: Clutter.Rectangle,
 
-    _init: function (upperLimit, lowerLimit) {
+    _init: function () {
         this.parent();
         this.set_size(PONG_BALL_SIZE, PONG_BALL_SIZE);
         this.reset();
-
-        this.upperLimit = upperLimit;
-        this.lowerLimit = lowerLimit;
     },
 
     reset: function () {
