@@ -6,8 +6,9 @@ const Clutter = imports.gi.Clutter;
 const FilteredStage = imports.filteredStage.FilteredStage;
 const Player = imports.player.PongPlayer;
 const PlayerWidth = imports.player.PONG_STICK_WIDTH;
-const Ball = imports.ball.Ball;
+const Ball = imports.ball.PongBall;
 const LedCounter = imports.counter.LedCounter;
+const collisions = imports.CollisionToy.collisions;
 
 let PLAYER_ONE_UP = 25;   // W
 let PLAYER_ONE_DOWN = 39; // S
@@ -43,7 +44,8 @@ let playerTwo = new Player(stage.get_width() - margin - 10, 200, upperLimit, low
 stage.add_actor(playerOne);
 stage.add_actor(playerTwo);
 
-let ball = new Ball(stage, margin + 10, stage.get_width() - margin - 10);
+let ball = new Ball(0, 480); // FIXME
+stage.add_actor(ball);
 
 let playerOneCounter = new LedCounter();
 let playerTwoCounter = new LedCounter();
@@ -71,9 +73,9 @@ function restart_game() {
 gameloop.connect('new-frame', function () {
     playerOne.move();
     playerTwo.move();
-    ball.move(playerOne.get_surface(), playerTwo.get_surface());
+    ball.move();
 
-    let result = ball.scored();
+    let result = collisions(ball, playerOne, playerTwo);
     if (result === 0) {
         return;
     }
