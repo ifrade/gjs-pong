@@ -39,8 +39,10 @@ let stageCenterX = stage.get_width() / 2;
 let stageCenterY = stage.get_height() / 2;
 
 // Add players, ball and counters to the stage
-let playerOne = new Player(margin, 200, upperLimit, lowerLimit);
-let playerTwo = new Player(stage.get_width() - margin - 10, 200, upperLimit, lowerLimit);
+let playerOne = new Player(upperLimit, lowerLimit);
+let playerTwo = new Player(upperLimit, lowerLimit);
+playerOne.set_position(margin, 200);
+playerTwo.set_position(stage.get_width() - margin - PlayerWidth, 200);
 stage.add_actor(playerOne);
 stage.add_actor(playerTwo);
 

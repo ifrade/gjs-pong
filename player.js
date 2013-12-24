@@ -13,13 +13,12 @@ const PongPlayer = new Lang.Class({
     Name: "PongPlayer",
     Extends: Clutter.Rectangle,
 
-    _init: function (initialX, initialY, upperLimit, lowerLimit) {
+    _init: function (upperLimit, lowerLimit) {
         this.parent();
         this.xsize = PONG_STICK_WIDTH;
         this.ysize = PONG_STICK_HEIGHT;
         this.set_size(this.xsize, this.ysize);
 
-        this.set_position(initialX, initialY);
         this.set_color(new Clutter.Color({
             red: 150,
             blue: 0,
@@ -52,7 +51,7 @@ const PongPlayer = new Lang.Class({
     },
 
     _moveDown: function () {
-        let newY = this.y + 10;
+        let newY = this.y + PONG_STICK_MOVE_STEP;
         // Do not escape through the bottom!
         if (newY + this.ysize > this.lowerLimit) {
             return;
