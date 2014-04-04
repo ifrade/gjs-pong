@@ -71,6 +71,10 @@ const PongPlayer = new Lang.Class({
         }
     },
 
+    collision: function (ball) {
+        ball.x_collision(this.currentDirection);
+    },
+
     get_surface: function () {
         let position = this.get_position();
         return {ytop: position[1],

@@ -8,7 +8,9 @@ const Player = imports.player.PongPlayer;
 const PlayerWidth = imports.player.PONG_STICK_WIDTH;
 const Ball = imports.ball.PongBall;
 const LedCounter = imports.counter.LedCounter;
-const collisions = imports.CollisionToy.collisions;
+const PongVWall = imports.wall.PongVWall;
+const PongHWall = imports.wall.PongHWall;
+const CollisionEngine = imports.collision2.CollisionEngine;
 
 let PLAYER_ONE_UP = 25;   // W
 let PLAYER_ONE_DOWN = 39; // S
@@ -28,6 +30,7 @@ stage.set_background_color(new Clutter.Color({
     alpha: 0
 }));
 
+let collisionEngine = new CollisionEngine();
 //print (stage.get_width(), stage.get_height()); // 640, 480
 
 // Player margins
@@ -45,6 +48,8 @@ playerOne.set_position(margin, 200);
 playerTwo.set_position(stage.get_width() - margin - PlayerWidth, 200);
 stage.add_actor(playerOne);
 stage.add_actor(playerTwo);
+collisionEngine.addObject(playerOne, {fromRight: true});
+collisionEngine.addObject(playerTwo, {fromLeft: true});
 
 let ball = new Ball();
 stage.add_actor(ball);
@@ -59,6 +64,34 @@ stage.add_actor(playerTwoCounter);
 
 // Set up game loop
 let gameloop = new Clutter.Timeline({"duration": 10000, "loop": true});
+
+// Add walls around...
+// We pass the counter we want to increment on collision
+let leftWall = new PongVWall(stage.get_height(), function () {
+    playerTwoCounter.increment();
+    gameloop.stop();
+});
+let rightWall = new PongVWall(stage.get_height(), function () {
+    playerOneCounter.increment();
+    gameloop.stop();
+});
+
+let upperWall = new PongHWall(stage.get_width());
+let lowerWall = new PongHWall(stage.get_width());
+
+leftWall.set_position(0, 0);
+rightWall.set_position(stage.get_width(), 0);
+upperWall.set_position(0, 0);
+lowerWall.set_position(0, stage.get_height());
+stage.add_actor(leftWall);
+stage.add_actor(rightWall);
+stage.add_actor(upperWall);
+stage.add_actor(lowerWall);
+
+collisionEngine.addObject(leftWall, {fromRight: true});
+collisionEngine.addObject(rightWall, {fromLeft: true});
+collisionEngine.addObject(upperWall, {fromBelow: true});
+collisionEngine.addObject(lowerWall, {fromAbove: true});
 
 function restart_game() {
     if (gameloop.is_playing()) {
@@ -77,17 +110,7 @@ gameloop.connect('new-frame', function () {
     playerTwo.move();
     ball.move();
 
-    let result = collisions(ball, playerOne, playerTwo);
-    if (result === 0) {
-        return;
-    }
-
-    if (result === -1) {
-        playerOneCounter.increment();
-    } else {
-        playerTwoCounter.increment();
-    }
-    gameloop.stop();
+    collisionEngine.run(ball);
 });
 
 gameloop.connect('completed', function (gl, user_data) {
