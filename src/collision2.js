@@ -31,6 +31,8 @@ CollisionEngine.prototype.addObject = function (obj, collisionPattern) {
 // return 1 is other player scores ?!
 CollisionEngine.prototype.run = function (ball) {
 
+    var collision = -1;
+
     function segmentCollision(a, lengthA, b, lengthB) {
         //  case 1: a------
         //             b-----
@@ -50,6 +52,7 @@ CollisionEngine.prototype.run = function (ball) {
                 if ((obj.y + obj.height) === ball.y &&
                     segmentCollision(obj.x, obj.width, ball.x, ball.width)) {
                     obj.collision(ball);
+                    collision = obj.x;
                 }
             });
             break;
@@ -60,6 +63,7 @@ CollisionEngine.prototype.run = function (ball) {
                 if (obj.y === (ball.y + ball.height) &&
                     segmentCollision(obj.x, obj.width, ball.x, ball.width)) {
                     obj.collision(ball);
+                    collision = obj.x;
                 }
             });
             break;
@@ -76,10 +80,11 @@ CollisionEngine.prototype.run = function (ball) {
             this.fromRight.forEach(function (obj) {
                 // left of ball === right of object
                 // && in y range
-                print("fromRight", obj.x + obj.width, "===", ball.x);
+                //print("fromRight", obj.x + obj.width, "===", ball.x);
                 if ((obj.x + obj.width) === ball.x &&
                     segmentCollision(obj.y, obj.height, ball.y, ball.height)) {
                     obj.collision(ball);
+                    collision = ball.x;
                 }
             });
             break;
@@ -87,10 +92,11 @@ CollisionEngine.prototype.run = function (ball) {
             this.fromLeft.forEach(function (obj) {
                 // right of ball === left of object
                 // && in y range
-                print("fromLeft", obj.x, "===", ball.x + ball.width);
+                //print("fromLeft", obj.x, "===", ball.x + ball.width);
                 if (obj.x === (ball.x + ball.width) &&
                     segmentCollision(obj.y, obj.height, ball.y, ball.height)) {
                     obj.collision(ball);
+                    collision = obj.x;
                 }
             });
             break;
@@ -100,4 +106,5 @@ CollisionEngine.prototype.run = function (ball) {
             print("Warning, weird ball.xdirection value!?! ", ball.xdirection);
     }
 
+    return collision;
 };
