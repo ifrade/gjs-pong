@@ -11,6 +11,7 @@ const LedCounter = imports.counter.LedCounter;
 const PongVWall = imports.wall.PongVWall;
 const PongHWall = imports.wall.PongHWall;
 const CollisionEngine = imports.collision2.CollisionEngine;
+const SoundBox = imports.soundbox.SoundBox;
 
 let PLAYER_ONE_UP = 25;   // W
 let PLAYER_ONE_DOWN = 39; // S
@@ -31,6 +32,7 @@ stage.set_background_color(new Clutter.Color({
 }));
 
 let collisionEngine = new CollisionEngine();
+let soundbox = new SoundBox("../data/Door_Knock.wav");
 //print (stage.get_width(), stage.get_height()); // 640, 480
 
 // Player margins
@@ -110,7 +112,10 @@ gameloop.connect('new-frame', function () {
     playerTwo.move();
     ball.move();
 
-    collisionEngine.run(ball);
+    let collision = collisionEngine.run(ball);
+    if (collision !== -1) {
+        soundbox.pong();
+    }
 });
 
 gameloop.connect('completed', function (gl, user_data) {
