@@ -10,6 +10,7 @@ const Ball = imports.ball.PongBall;
 const LedCounter = imports.counter.LedCounter;
 const PongVWall = imports.wall.PongVWall;
 const PongHWall = imports.wall.PongHWall;
+const WALL_THIKNESS = imports.wall.WALL_THIKNESS;
 const CollisionEngine = imports.collision2.CollisionEngine;
 const SoundBox = imports.soundbox.SoundBox;
 
@@ -81,9 +82,11 @@ let rightWall = new PongVWall(stage.get_height(), function () {
 let upperWall = new PongHWall(stage.get_width());
 let lowerWall = new PongHWall(stage.get_width());
 
-leftWall.set_position(0, 0);
+// Walls have "volume", so we set the origin out of the screen
+//  to make them invisible
+leftWall.set_position(-1 * WALL_THIKNESS, 0);
 rightWall.set_position(stage.get_width(), 0);
-upperWall.set_position(0, 0);
+upperWall.set_position(0, -1 * WALL_THIKNESS);
 lowerWall.set_position(0, stage.get_height());
 stage.add_actor(leftWall);
 stage.add_actor(rightWall);

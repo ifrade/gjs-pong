@@ -1,6 +1,10 @@
 /*jshint moz: true, camelcase: false */
 /*global imports, print*/
 
+imports.searchPath.unshift('.');
+const getV = imports.segment.getV;
+const getH = imports.segment.getH;
+
 function CollisionEngine() {
     // List of objects that can be hit from...
     this.fromAbove = [];
@@ -33,24 +37,13 @@ CollisionEngine.prototype.run = function (ball) {
 
     var collision = -1;
 
-    function segmentCollision(a, lengthA, b, lengthB) {
-        //  case 1: a------
-        //             b-----
-        //
-        //  case 2:   a-----
-        //          b------
-        return (((b <= a + lengthA) && (b >= a)) ||
-                (b + lengthB >= a) && (b + lengthB <= a + lengthA));
-    }
-
-
     switch (ball.ydirection) {
         case -1: // Going up
             this.fromBelow.forEach(function (obj) {
                 // Top of ball === bottom object
                 // && in x range
-                if ((obj.y + obj.height) === ball.y &&
-                    segmentCollision(obj.x, obj.width, ball.x, ball.width)) {
+                if (getV(obj).overlap(getV(ball)) &&
+                    getH(obj).overlap(getH(ball))) {
                     obj.collision(ball);
                     collision = obj.x;
                 }
@@ -60,8 +53,8 @@ CollisionEngine.prototype.run = function (ball) {
             this.fromAbove.forEach(function (obj) {
                 // bottom of ball === top object
                 // && in x range
-                if (obj.y === (ball.y + ball.height) &&
-                    segmentCollision(obj.x, obj.width, ball.x, ball.width)) {
+                if (getV(obj).overlap(getV(ball)) &&
+                    getH(obj).overlap(getH(ball))) {
                     obj.collision(ball);
                     collision = obj.x;
                 }
@@ -80,9 +73,10 @@ CollisionEngine.prototype.run = function (ball) {
             this.fromRight.forEach(function (obj) {
                 // left of ball === right of object
                 // && in y range
-                //print("fromRight", obj.x + obj.width, "===", ball.x);
-                if ((obj.x + obj.width) === ball.x &&
-                    segmentCollision(obj.y, obj.height, ball.y, ball.height)) {
+                //print("fromRight", getV(obj), "===", getV(ball));
+
+                if (getV(obj).overlap(getV(ball)) &&
+                    getH(obj).overlap(getH(ball))) {
                     obj.collision(ball);
                     collision = ball.x;
                 }
@@ -93,8 +87,8 @@ CollisionEngine.prototype.run = function (ball) {
                 // right of ball === left of object
                 // && in y range
                 //print("fromLeft", obj.x, "===", ball.x + ball.width);
-                if (obj.x === (ball.x + ball.width) &&
-                    segmentCollision(obj.y, obj.height, ball.y, ball.height)) {
+                if (getV(obj).overlap(getV(ball)) &&
+                    getH(obj).overlap(getH(ball))) {
                     obj.collision(ball);
                     collision = obj.x;
                 }
