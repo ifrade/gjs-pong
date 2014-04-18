@@ -62,10 +62,10 @@ const PongPlayer = new Lang.Class({
 
     move: function () {
         switch (this.currentDirection) {
-        case 1:
+        case -1:
             this._moveUp();
             break;
-        case -1:
+        case 1:
             this._moveDown();
             break;
         }

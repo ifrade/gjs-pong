@@ -130,16 +130,16 @@ stage.connect("key-press-event", function (obj, event, user_data) {
     //print("key-press-event", event.get_key_code());
     switch (event.get_key_code()) {
         case PLAYER_ONE_UP:
-            playerOne.set_direction(1);
-            break;
-        case PLAYER_ONE_DOWN:
             playerOne.set_direction(-1);
             break;
+        case PLAYER_ONE_DOWN:
+            playerOne.set_direction(1);
+            break;
         case PLAYER_TWO_UP:
-            playerTwo.set_direction(1);
+            playerTwo.set_direction(-1);
             break;
         case PLAYER_TWO_DOWN:
-            playerTwo.set_direction(-1);
+            playerTwo.set_direction(1);
             break;
     }
     return true;
