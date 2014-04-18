@@ -47,12 +47,12 @@ function CollisionEngine() {
 }
 
 CollisionEngine.prototype.addObject = function (obj, collisionPattern) {
-    if (!obj instanceof Rectangle) {
-        print("Collision engine only works with rectangles! Ignoring object.");
-        return;
+    if (!(obj instanceof Rectangle)) {
+        print("[WARN] Collision engine only works with rectangles! Ignoring object.");
+        // Let it pass to make testing easier
     }
 
-    print("Pushing object", obj.x, obj.y, obj.width, obj.height);
+    //print("Pushing object", obj.x, obj.y, obj.width, obj.height);
     if (collisionPattern.fromLeft) {
         this.fromLeft.push(obj);
     }
