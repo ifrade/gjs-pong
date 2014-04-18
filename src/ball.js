@@ -3,7 +3,16 @@
 const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
 
+const Vector = imports.vector.Vector;
 const PONG_BALL_SIZE = 10;
+
+function getRandomArbitrary(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
+function flip() {
+    return Math.random() > 0.5 ? 1 : -1;
+}
 
 const PongBall = new Lang.Class({
     Name: "PongBall",
@@ -16,28 +25,30 @@ const PongBall = new Lang.Class({
     },
 
     reset: function () {
-        this.set_position(320, 240); // FIXME
-        this.xdirection = (Math.random() < 0.5) ? -1 : 1;
-        this.ydirection = (Math.random() < 0.5) ? -1 : 1;
+        this.pos = new Vector(320, 240); // FIXME
+        this.velocity = new Vector(getRandomArbitrary(3, 5) * flip(),
+                                   getRandomArbitrary(-4, 5));
+        this.apply_position();
+    },
 
-        this.xspeed = 7;
-        this.yspeed = 0;
+    apply_position: function () {
+        this.set_position(this.pos.x, this.pos.y);
     },
 
     move: function () {
-        this.x += (this.xdirection * this.xspeed);
-        this.y += (this.ydirection * this.yspeed);
+        // Saving few instructions from using a vector:
+        this.pos.add(this.velocity);
+        this.apply_position();
     },
 
     x_collision: function (yfactor) {
-        print("Collision when x:", this.x, "y:", this.y, " yspeed:", this.yspeed);
-        this.xdirection *= -1;
-        // Put here some Y randomness
-        this.yspeed = 5;
+        this.velocity.x *= -1;
+        let n = getRandomArbitrary(2, 5); // How much does it affect to push "down" or "up"
+        this.velocity.y += (yfactor * n);
     },
 
     y_collision: function () {
-        this.ydirection *= -1;
+        this.velocity.y *= -1;
     }
 
 });

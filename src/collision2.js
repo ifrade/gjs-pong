@@ -5,6 +5,8 @@ imports.searchPath.unshift('.');
 const getV = imports.segment.getV;
 const getH = imports.segment.getH;
 
+function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
+
 function CollisionEngine() {
     // List of objects that can be hit from...
     this.fromAbove = [];
@@ -37,7 +39,7 @@ CollisionEngine.prototype.run = function (ball) {
 
     var collision = -1;
 
-    switch (ball.ydirection) {
+    switch (sign(ball.velocity.y)) {
         case -1: // Going up
             this.fromBelow.forEach(function (obj) {
                 // Top of ball === bottom object
@@ -68,7 +70,7 @@ CollisionEngine.prototype.run = function (ball) {
     }
 
 
-    switch (ball.xdirection) {
+    switch (sign(ball.velocity.x)) {
         case -1: // Going left
             this.fromRight.forEach(function (obj) {
                 // left of ball === right of object
